@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PLAYER
+  MASTER
+}
+
+model User {
+  id           String      @id @default(cuid())
+  username     String      @unique
+  displayName  String
+  passwordHash String
+  role         UserRole
+  characters   Character[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Campaign {
+  id         String      @id @default(cuid())
+  name       String
+  isDefault  Boolean     @default(false)
+  characters Character[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Character {
+  id               String          @id @default(cuid())
+  campaignId       String
+  ownerId          String?
+  name             String
+  level            Int             @default(1)
+  shortDescription String
+  classKey         String
+  subclassKey      String
+  ancestryKey      String
+  communityKey     String
+  domains          String          @default("[]")
+  attributes       String          @default("{}")
+  proficiencies    String          @default("{}")
+  conditions       String          @default("[]")
+  resources        String          @default("{}")
+  totalHp          Int
+  currentHp        Int             @default(0)
+  armorMax         Int
+  armorCurrent     Int
+  threshold1       Int
+  threshold2       Int
+  evasion          Int
+  notes            String?
+  isDowned         Boolean         @default(false)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  campaign         Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  owner            User?           @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  cards            CharacterCard[]
+  damageLogs       DamageLog[]
+  effectLogs       EffectLog[]
+
+  @@index([campaignId])
+  @@index([ownerId])
+}
+
+model Card {
+  id            String          @id
+  name          String
+  category      String
+  type          String?
+  classKey      String?
+  subclassKey   String?
+  domainKey     String?
+  tier          String?
+  text          String
+  keywords      String          @default("[]")
+  imageUrl      String?
+  sourcePdfKey  String?
+  sourcePage    Int?
+  effects       String          @default("[]")
+  customHandler String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  characters    CharacterCard[]
+  effectLogs    EffectLog[]
+
+  @@index([category])
+  @@index([classKey])
+  @@index([subclassKey])
+  @@index([domainKey])
+}
+
+model CharacterCard {
+  id          String    @id @default(cuid())
+  characterId String
+  cardId      String
+  status      String    @default("passiva")
+  usesMax     Int?
+  usesCurrent Int?
+  cooldown    String?
+  notes       String?
+  assignedAt  DateTime  @default(now())
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  card        Card      @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([characterId, cardId])
+  @@index([characterId])
+  @@index([cardId])
+}
+
+model DamageLog {
+  id           String    @id @default(cuid())
+  characterId  String
+  damageRaw    Int
+  damagePoints Int
+  armorUsed    Boolean
+  armorBefore  Int
+  armorAfter   Int
+  hpBefore     Int
+  hpAfter      Int
+  downed       Boolean
+  undoneAt     DateTime?
+  createdAt    DateTime  @default(now())
+  character    Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([characterId])
+  @@index([createdAt])
+}
+
+model EffectLog {
+  id          String     @id @default(cuid())
+  characterId String?
+  cardId      String?
+  action      String
+  summary     String
+  details     String?
+  createdAt   DateTime   @default(now())
+  character   Character? @relation(fields: [characterId], references: [id], onDelete: SetNull)
+  card        Card?      @relation(fields: [cardId], references: [id], onDelete: SetNull)
+
+  @@index([characterId])
+  @@index([cardId])
+  @@index([createdAt])
+}

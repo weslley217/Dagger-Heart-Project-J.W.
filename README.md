@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Daggerheart Campaign Hub
 
-## Getting Started
+Plataforma web para Daggerheart com backend Supabase, focada em:
 
-First, run the development server:
+- criação de personagem (ficha base) pelo jogador
+- múltiplos personagens por conta
+- campanhas controladas pelo mestre (sem auto-cadastro público)
+- snapshot da ficha dentro da campanha sem afetar a ficha base
+- painel do mestre para dano, condições, cartas, histórico e undo
+- importação de cartas por `DH-Baralho.pdf`, JSON e cadastro manual
+- atualização em tempo real via Supabase Realtime + refresh reativo
+
+## Acessos padrão
+
+- `mestre / 123456`
+- `joao / 1234` (jogador de exemplo)
+
+## Fonte de dados usada
+
+- `daggerheart_criacao_personagem.json` (extraído do livro básico): classes, subclasses, ancestralidades, comunidades, defaults de ficha
+- `DH-Baralho.pdf`: importação das cartas (nome, texto, categoria, efeitos inferidos)
+
+## Stack
+
+- Next.js 16 + React 19 + TypeScript
+- Tailwind CSS 4
+- Zustand
+- Supabase (Postgres + Realtime)
+- Vitest
+
+## Configuração
+
+1. Ajuste as variáveis em `.env` (já preenchidas no ambiente atual).
+2. Instale dependências e aplique o schema:
+
+```bash
+npm install
+npm run supabase:apply-schema
+```
+
+3. (Opcional) Reimporte cartas:
+
+```bash
+npm run import:cards -- "C:\\Users\\wesll\\Downloads\\DH-Baralho.pdf"
+```
+
+4. Rode o app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm test
+npm run supabase:apply-schema
+npm run import:cards
+```
 
-## Learn More
+## Estrutura principal
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+src/
+  app/
+    api/
+    login/
+    master/
+    player/
+  components/
+    ui/
+  data/
+  hooks/
+  lib/
+  rules/
+  stores/
+  types/
+scripts/
+  apply-supabase-schema.ts
+  import-card-pdf.ts
+supabase/
+  schema.sql
+```

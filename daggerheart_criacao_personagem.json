@@ -1,0 +1,1359 @@
+{
+  "meta": {
+    "title": "Daggerheart - Livro Básico - JSON de criação de personagem",
+    "language": "pt-BR",
+    "source_pdf": "DH-Livro-Basico.pdf",
+    "scope": "Dados necessários para criação de ficha e estruturação inicial do dashboard",
+    "extraction_note": "Este JSON privilegia a criação de personagem: fluxo de criação, atributos, domínios, classes, subclasses, ancestralidades, comunidades, equipamentos iniciais e regras-base relacionadas à ficha. Cenários, aventuras, bestiário e cartas de domínio completas ficam para JSONs separados.",
+    "page_map": {
+      "toc": 5,
+      "creation": [
+        15,
+        21
+      ],
+      "domains": [
+        24,
+        26
+      ],
+      "classes": [
+        28,
+        50
+      ],
+      "ancestries": [
+        52,
+        71
+      ],
+      "communities": [
+        72,
+        81
+      ],
+      "core_mechanics_for_sheet": [
+        91,
+        129
+      ]
+    }
+  },
+  "sheet_defaults": {
+    "starting_level": 1,
+    "starting_proficiency": 1,
+    "starting_hope": 2,
+    "max_hope": 6,
+    "starting_fatigue_by_default": 6,
+    "attribute_modifiers_to_assign": [
+      2,
+      1,
+      1,
+      0,
+      0,
+      -1
+    ],
+    "notes": [
+      "A Evasão inicial vem da classe.",
+      "Os Pontos de Vida iniciais vêm da classe.",
+      "Os Pontos de Fadiga iniciais começam em 6, salvo bônus de ancestralidade ou efeitos específicos.",
+      "Os limiares de dano finais são calculados a partir da armadura equipada: limiar_base + nível do personagem."
+    ]
+  },
+  "attributes": [
+    {
+      "name": "Agilidade",
+      "verbs": [
+        "Correr",
+        "Equilibrar-se",
+        "Saltar"
+      ],
+      "summary": "Mobilidade, reflexos e velocidade.",
+      "examples": [
+        "escalar um muro",
+        "correr até cobertura",
+        "saltar entre telhados"
+      ]
+    },
+    {
+      "name": "Força",
+      "verbs": [
+        "Agarrar",
+        "Levantar",
+        "Quebrar"
+      ],
+      "summary": "Potência física, vigor e imposição corporal.",
+      "examples": [
+        "arrombar uma porta",
+        "erguer objetos",
+        "segurar posição contra investida"
+      ]
+    },
+    {
+      "name": "Acuidade",
+      "verbs": [
+        "Esconder-se",
+        "Manipular",
+        "Manobrar"
+      ],
+      "summary": "Precisão, sutileza e trabalho fino.",
+      "examples": [
+        "usar ferramentas delicadas",
+        "evitar ser percebido",
+        "desferir golpe mirado"
+      ]
+    },
+    {
+      "name": "Instinto",
+      "verbs": [
+        "Perceber",
+        "Pressentir",
+        "Orientar"
+      ],
+      "summary": "Percepção, intuição e leitura do ambiente.",
+      "examples": [
+        "notar detalhes",
+        "pressentir perigo",
+        "encontrar inimigo ardiloso"
+      ]
+    },
+    {
+      "name": "Presença",
+      "verbs": [
+        "Comover",
+        "Convencer",
+        "Enganar"
+      ],
+      "summary": "Carisma, impacto social e força de personalidade.",
+      "examples": [
+        "argumentar",
+        "intimidar",
+        "atrair atenção de multidão"
+      ]
+    },
+    {
+      "name": "Conhecimento",
+      "verbs": [
+        "Analisar",
+        "Aprender",
+        "Lembrar"
+      ],
+      "summary": "Raciocínio, dedução e memória.",
+      "examples": [
+        "interpretar fatos",
+        "enxergar padrões",
+        "lembrar informações importantes"
+      ]
+    }
+  ],
+  "creation_flow": [
+    {
+      "step": 0,
+      "name": "Preparação",
+      "summary": "Converse sobre a campanha, participe da sessão zero e defina um conceito inicial."
+    },
+    {
+      "step": 1,
+      "name": "Escolha sua classe",
+      "summary": "Escolha 1 classe e 1 subclasse; pegue a ficha/guia correspondente."
+    },
+    {
+      "step": 2,
+      "name": "Escolha sua herança",
+      "summary": "Escolha 1 ancestralidade e 1 comunidade."
+    },
+    {
+      "step": 3,
+      "name": "Distribua seus atributos",
+      "summary": "Distribua +2, +1, +1, 0, 0, -1 entre os seis atributos."
+    },
+    {
+      "step": 4,
+      "name": "Escreva informações adicionais",
+      "summary": "Anote Evasão, PV, PF, Esperança, aparência e demais dados básicos da ficha."
+    },
+    {
+      "step": 5,
+      "name": "Escolha seu equipamento inicial",
+      "summary": "Escolha arma principal, opcionalmente arma secundária, armadura e itens comuns."
+    },
+    {
+      "step": 6,
+      "name": "Crie sua origem",
+      "summary": "Responda perguntas narrativas da classe/subclasse."
+    },
+    {
+      "step": 7,
+      "name": "Crie suas experiências",
+      "summary": "Começa com 2 experiências, cada uma com modificador +2."
+    },
+    {
+      "step": 8,
+      "name": "Escolha suas cartas",
+      "summary": "Escolha 2 cartas de domínio de nível 1 dos domínios da classe."
+    },
+    {
+      "step": 9,
+      "name": "Crie seus vínculos",
+      "summary": "Defina relações com outros personagens do grupo."
+    }
+  ],
+  "domains": [
+    {
+      "name": "Arcano",
+      "summary": "Magia inata e instintiva; energia bruta e elementos."
+    },
+    {
+      "name": "Códice",
+      "summary": "Estudo intensivo da magia; conhecimento escrito, versátil e erudito."
+    },
+    {
+      "name": "Esplendor",
+      "summary": "Domínio da vida; cura, morte e restauração."
+    },
+    {
+      "name": "Falange",
+      "summary": "Domínio do corpo e da estratégia; controle físico e combate tático."
+    },
+    {
+      "name": "Graça",
+      "summary": "Domínio do carisma; narrativas, encanto, magnetismo e manipulação social."
+    },
+    {
+      "name": "Lâmina",
+      "summary": "Maestria com armas; letalidade e domínio da morte em combate."
+    },
+    {
+      "name": "Meia-noite",
+      "summary": "Sombras e segredos; escuridão, truques, mistérios e tesouros ocultos."
+    },
+    {
+      "name": "Sabedoria",
+      "summary": "Mundo natural; vitalidade da terra, ferocidade predatória e magia bruta da natureza."
+    },
+    {
+      "name": "Valor",
+      "summary": "Proteção; defesa, escudos e poder canalizado para proteger aliados."
+    }
+  ],
+  "classes": [
+    {
+      "name": "Bardo",
+      "domains": [
+        "Códice",
+        "Graça"
+      ],
+      "starting_evasion": 10,
+      "starting_hp": 5,
+      "starting_class_items_choice": [
+        "Um livro de romance",
+        "Uma carta que nunca foi aberta"
+      ],
+      "hope_feature": {
+        "name": "Fazer uma Cena",
+        "cost_hope": 3,
+        "effect": "Distrai temporariamente um alvo próximo, aplicando -2 à Dificuldade dele."
+      },
+      "class_features": [
+        {
+          "name": "Inspiração",
+          "effect": "Uma vez por sessão, concede a você e seus aliados um Dado de Inspiração (d6 no nível 1, d8 no nível 5). Pode somar a teste, teste de reação, rolagem de dano ou recuperar PF igual ao resultado."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Beletrista",
+          "conjuration_attribute": "Presença",
+          "fundamental": [
+            "Discurso Inspirador: uma vez por descanso longo, todos os aliados até alcance distante recuperam 2 PF.",
+            "Alma de Poeta: após impressionar, persuadir ou ofender alguém, gaste 1 Esperança para somar 1d4 à rolagem."
+          ],
+          "specialization": [
+            "Eloquente: uma vez por sessão ao encorajar um aliado, você pode ajudá-lo sem gastar Esperança, dar um movimento de repouso adicional ou permitir que ele encontre uma ferramenta/objeto mundano útil."
+          ],
+          "mastery": [
+            "Poesia Épica: o Dado de Inspiração sobe para d10; ao prestar ajuda narrando o heroísmo do aliado, role 1d10 como dado de vantagem."
+          ]
+        },
+        {
+          "name": "Trovador",
+          "conjuration_attribute": "Presença",
+          "fundamental": [
+            "Artista Talentoso: cada canção abaixo pode ser usada 1 vez por descanso longo.",
+            "Canção Comovente: você e aliados próximos recebem 1 Esperança.",
+            "Canção Épica: deixa um alvo próximo temporariamente Vulnerável.",
+            "Canção Relaxante: você e aliados próximos recuperam 1 PV."
+          ],
+          "specialization": [
+            "Maestro: ao conceder um Dado de Inspiração a um aliado, ele pode receber 1 Esperança ou recuperar 1 PF."
+          ],
+          "mastery": [
+            "Virtuoso: cada canção de Artista Talentoso pode ser usada 2 vezes por descanso longo."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Druida",
+      "domains": [
+        "Arcano",
+        "Sabedoria"
+      ],
+      "starting_evasion": 10,
+      "starting_hp": 6,
+      "starting_class_items_choice": [
+        "Uma pequena bolsa com ossos e pedras",
+        "Um estranho pingente encontrado na terra"
+      ],
+      "hope_feature": {
+        "name": "Evolução",
+        "cost_hope": 3,
+        "effect": "Usa Forma de Fera sem marcar PF e aumenta um atributo em +1 até sair da forma."
+      },
+      "class_features": [
+        {
+          "name": "Forma de Fera",
+          "effect": "Marque 1 PF para se transformar em criatura de patamar igual ou menor ao seu. Não usa armas nem feitiços das cartas enquanto transformado, mas mantém outras habilidades. Soma o bônus de Evasão da forma, usa o atributo da forma para atacar e continua marcando Armadura normalmente."
+        },
+        {
+          "name": "Dádiva da Natureza",
+          "effect": "Cria efeitos sutis e inofensivos ligados à natureza à vontade."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Protetor dos Elementos",
+          "conjuration_attribute": "Instinto",
+          "fundamental": [
+            "Encarnação Elemental: marque 1 PF para Canalizar água, ar, fogo ou terra até sofrer dano grave ou descansar."
+          ],
+          "specialization": [
+            "Aura Elemental: uma vez por descanso, enquanto Canalizando, manifesta aura ligada ao elemento escolhido."
+          ],
+          "mastery": [
+            "Soberania Elemental: reforça os benefícios do elemento enquanto Canalizando."
+          ]
+        },
+        {
+          "name": "Protetor da Renovação",
+          "conjuration_attribute": "Instinto",
+          "fundamental": [
+            "Serenidade da Natureza: uma vez por descanso longo, cria espaço natural em alcance próximo e recupera PF do grupo igual ao seu Instinto.",
+            "Regeneração: toque uma criatura e gaste 3 Esperança para que ela recupere 1d4 PV."
+          ],
+          "specialization": [
+            "Presença Curativa: Regeneração passa a funcionar em criaturas muito próximas.",
+            "Proteção Druídica: uma vez por descanso longo, gaste 2 Esperança para recuperar 2 PV de 1d4 aliados próximos."
+          ],
+          "mastery": [
+            "Defensor: em Forma de Fera, quando aliado próximo marcaria 2+ PV, você pode marcar 1 PF para reduzir em 1 PV."
+          ]
+        }
+      ],
+      "notes": [
+        "As listas completas de Formas de Fera podem ser colocadas em um JSON separado, pois funcionam como catálogo próprio."
+      ]
+    },
+    {
+      "name": "Feiticeiro",
+      "domains": [
+        "Arcano",
+        "Meia-noite"
+      ],
+      "starting_evasion": 10,
+      "starting_hp": 6,
+      "starting_class_items_choice": [
+        "Um orbe sussurrante",
+        "Uma herança de família"
+      ],
+      "hope_feature": {
+        "name": "Magia Volátil",
+        "cost_hope": 3,
+        "effect": "Rola novamente qualquer quantidade de dados de dano em um ataque que causa dano mágico."
+      },
+      "class_features": [
+        {
+          "name": "Sentido Arcano",
+          "effect": "Sente objetos e pessoas com magia quando estão próximos."
+        },
+        {
+          "name": "Ilusão Menor",
+          "effect": "Teste de conjuração (10) para criar ilusão visual em alcance próximo, de até seu tamanho."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Elementalista",
+          "conjuration_attribute": "Instinto",
+          "fundamental": [
+            "Elementalismo: escolha água, ar, fogo, relâmpago ou terra na criação. Gaste 1 Esperança para receber +2 em teste ajudado pelo elemento ou +3 na rolagem de dano."
+          ],
+          "specialization": [
+            "Evasão Natural: ao sofrer ataque, marque 1 PF e role 1d6, somando à Evasão contra esse ataque."
+          ],
+          "mastery": [
+            "Transcendência: uma vez por descanso longo, transforma-se em manifestação do elemento e escolhe 2 benefícios entre +4 no limiar grave, +1 em atributo, +1 em Proficiência, +2 em Evasão."
+          ]
+        },
+        {
+          "name": "Primordialista",
+          "conjuration_attribute": "Instinto",
+          "fundamental": [
+            "Manipular Magia: após conjurar feitiço ou atacar com arma mágica, marque 1 PF para estender alcance, receber +2 no teste, dobrar um dado de dano ou acertar alvo adicional."
+          ],
+          "specialization": [
+            "Auxílio Encantado: ao ajudar aliado em teste de conjuração, pode rolar 1d8 como dado de vantagem; uma vez por descanso longo pode trocar os Dados de Dualidade do aliado."
+          ],
+          "mastery": [
+            "Carga Arcana: ao sofrer dano mágico ou gastar 2 Esperança, fica Carregado; ao acertar ataque mágico, pode zerar a carga para ganhar +10 no dano ou +3 na Dificuldade de teste de reação exigido."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guardião",
+      "domains": [
+        "Valor",
+        "Lâmina"
+      ],
+      "starting_evasion": 9,
+      "starting_hp": 7,
+      "starting_class_items_choice": [
+        "Um totem de seu mentor",
+        "Uma chave secreta"
+      ],
+      "hope_feature": {
+        "name": "Linha de Frente",
+        "cost_hope": 3,
+        "effect": "Recupera 2 Pontos de Armadura."
+      },
+      "class_features": [
+        {
+          "name": "Determinação",
+          "effect": "Uma vez por descanso longo, pode ficar Determinado e receber um Dado de Determinação (o texto completo continua na ficha/classe)."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Baluarte",
+          "fundamental": [
+            "Resoluto: +1 permanente em limiares de dano.",
+            "Vontade de Ferro: ao sofrer dano físico, pode marcar 1 PA adicional para reduzir a gravidade."
+          ],
+          "specialization": [
+            "Irrefreável: +2 permanente em limiares de dano.",
+            "Irmãos de Armas: quando aliado muito próximo sofre dano físico, marque 1 PA para reduzir a gravidade em 1 limiar."
+          ],
+          "mastery": [
+            "Impávido: +3 permanente em limiares de dano.",
+            "Protetor Leal: quando aliado próximo com 2 PV ou menos vai sofrer dano, marque 1 PF para sofrer o dano no lugar dele."
+          ]
+        },
+        {
+          "name": "Vingador",
+          "fundamental": [
+            "Vem Tranquilo: recebe 1 PF adicional.",
+            "Revanche: quando adversário corpo a corpo acerta você, marque 2 PF para forçá-lo a marcar 1 PV."
+          ],
+          "specialization": [
+            "Represália: quando adversário causa dano a aliado corpo a corpo, +1 de Proficiência no próximo ataque que acertar contra ele."
+          ],
+          "mastery": [
+            "Nêmesis: gaste 2 Esperança para Priorizar um adversário até o próximo descanso; ao atacá-lo, pode trocar os resultados dos Dados de Esperança e Medo."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Guerreiro",
+      "domains": [
+        "Falange",
+        "Lâmina"
+      ],
+      "starting_evasion": 11,
+      "starting_hp": 6,
+      "starting_class_items_choice": [
+        "O desenho de alguém que ama",
+        "Uma pedra de amolar"
+      ],
+      "hope_feature": {
+        "name": "Sem Piedade",
+        "cost_hope": 3,
+        "effect": "Recebe +1 em testes de ataque até o próximo descanso."
+      },
+      "class_features": [
+        {
+          "name": "Ataque de Oportunidade",
+          "effect": "Se adversário corpo a corpo tentar sair do alcance, faça teste de reação; em sucesso pode impedir movimento, causar dano igual ao da arma principal ou mover-se junto. Em sucesso crítico, escolha dois."
+        },
+        {
+          "name": "Treinamento de Combate",
+          "effect": "Ignora tipo de empunhadura de armas equipadas; ao causar dano físico, recebe bônus igual ao nível na rolagem de dano."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Escolhido da Bravura",
+          "fundamental": [
+            "Coragem: ao falhar com Medo, receba 1 Esperança.",
+            "Ritual de Batalha: uma vez por descanso longo, antes de algo muito perigoso, recupere 2 PF e receba 2 Esperança."
+          ],
+          "specialization": [
+            "Enfrentar o Desafio: enquanto tiver 2 PV ou menos desmarcados, pode usar 1d20 como Dado de Esperança."
+          ],
+          "mastery": [
+            "Camaradagem: inicia um teste em dupla adicional por sessão; aliados gastam só 2 Esperança para iniciar teste em dupla com você."
+          ]
+        },
+        {
+          "name": "Escolhido da Matança",
+          "fundamental": [
+            "Matança: ao rolar com Esperança, pode guardar 1d6 como Dado de Matança em vez de receber 1 Esperança; esses dados podem ser gastos em ataque ou dano."
+          ],
+          "specialization": [
+            "Especialista em Armas: ao acertar ataque, gaste 1 Esperança para somar um dos dados de dano da arma secundária à rolagem; uma vez por descanso longo, role novamente 1s nos Dados de Matança."
+          ],
+          "mastery": [
+            "Preparação Marcial: em descanso, você e aliados podem receber 1d6 como Dado de Matança."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ladino",
+      "domains": [
+        "Graça",
+        "Meia-noite"
+      ],
+      "starting_evasion": 12,
+      "starting_hp": 6,
+      "starting_class_items_choice": [
+        "Ferramentas de falsificação",
+        "Um arpéu"
+      ],
+      "hope_feature": {
+        "name": "Esquiva de Ladino",
+        "cost_hope": 3,
+        "effect": "Recebe +2 na Evasão até o próximo ataque que acertar você; se isso não acontecer, dura até o próximo descanso."
+      },
+      "class_features": [
+        {
+          "name": "Oculto",
+          "effect": "Sempre que estiver Escondido, em vez disso fica Oculto; mantém-se sem ser visto mesmo se um adversário se mover para onde normalmente o veria, desde que você fique parado."
+        },
+        {
+          "name": "Ataque Furtivo",
+          "effect": "Quando acerta ataque enquanto Oculto, ou com aliado corpo a corpo do alvo, soma d6 extras conforme a habilidade."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Gatuno",
+          "conjuration_attribute": "Acuidade",
+          "fundamental": [
+            "Passo Sombrio: ao entrar em escuridão ou sombra, marque 1 PF para desaparecer e reaparecer em outra sombra distante, ficando Oculto."
+          ],
+          "specialization": [
+            "Nuvem de Escuridão: teste de conjuração (15) cria nuvem temporária em área próxima que bloqueia visão.",
+            "Adrenalina: enquanto Vulnerável, some seu nível às rolagens de dano."
+          ],
+          "mastery": [
+            "Sombra Fugaz: +1 permanente em Evasão e Passo Sombrio alcança sombra muito distante.",
+            "Desaparecimento: marque 1 PF para ficar Oculto a qualquer momento até rolar com Medo ou descansar."
+          ]
+        },
+        {
+          "name": "Mafioso",
+          "conjuration_attribute": "Acuidade",
+          "fundamental": [
+            "Conexões: ao chegar a cidade ou local importante, você conhece alguém lá; define nome, utilidade e um detalhe da relação."
+          ],
+          "specialization": [
+            "Contatos: uma vez por sessão, convoca contato escuso para fornecer ouro/objeto, bônus +3 em Dado de Medo/Esperança no próximo teste, ou +2d8 no próximo dano."
+          ],
+          "mastery": [
+            "Reforços Confiáveis: pode usar Contatos 3 vezes por sessão e ganha novas opções, como reduzir PV marcados em 1 ou usar 1d20 como Dado de Esperança em conversa."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mago",
+      "domains": [
+        "Códice",
+        "Esplendor"
+      ],
+      "starting_evasion": 11,
+      "starting_hp": 5,
+      "starting_class_items_choice": [
+        "Um livro que você está tentando traduzir",
+        "Um pequeno e inofensivo elemental de estimação"
+      ],
+      "hope_feature": {
+        "name": "Não Dessa Vez",
+        "cost_hope": 3,
+        "effect": "Força um adversário distante ou mais próximo a refazer teste de ataque ou rolagem de dano."
+      },
+      "class_features": [
+        {
+          "name": "Padrões Estranhos",
+          "effect": "Escolha um número de 1 a 12; ao rolar esse número em um Dado do Destino, receba 1 Esperança ou recupere 1 PF."
+        },
+        {
+          "name": "Prestidigitação",
+          "effect": "Pequenos efeitos mágicos inofensivos à vontade."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Discípulo do Conhecimento",
+          "conjuration_attribute": "Conhecimento",
+          "fundamental": [
+            "Promissor: pegue uma carta de domínio adicional de nível igual ou inferior ao seu.",
+            "Adepto: ao usar Experiência, pode marcar 1 PF em vez de gastar Esperança; se fizer isso, dobra o modificador da Experiência."
+          ],
+          "specialization": [
+            "Talentoso: pegue mais 1 carta de domínio adicional.",
+            "Troca Perfeita: uma vez por descanso, reduz em 1 o custo de troca ao trocar carta de domínio da reserva."
+          ],
+          "mastery": [
+            "Brilhante: pegue outra carta de domínio adicional.",
+            "Bem Vivido: ao usar Experiência, role 1d6; com 5+, usa sem gastar Esperança."
+          ]
+        },
+        {
+          "name": "Discípulo da Guerra",
+          "conjuration_attribute": "Conhecimento",
+          "fundamental": [
+            "Mago de Batalha: recebe 1 PV adicional.",
+            "Encare o Medo: ao ter sucesso com Medo em ataque, causa 1d10 de dano mágico adicional."
+          ],
+          "specialization": [
+            "Conjurar Escudo: enquanto tiver ao menos 2 Esperança, some sua Proficiência à Evasão.",
+            "Movido por Medo: dano adicional de Encare o Medo sobe para 2d10."
+          ],
+          "mastery": [
+            "Triunfo do Caos: em ataque bem-sucedido, marque 1 PF após o dano para forçar alvo a marcar 1 PV adicional.",
+            "Não Tenha Medo: dano adicional de Encare o Medo sobe para 3d10."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Patrulheiro",
+      "domains": [
+        "Falange",
+        "Sabedoria"
+      ],
+      "starting_evasion": 12,
+      "starting_hp": 6,
+      "starting_class_items_choice": [
+        "Um troféu do seu primeiro abate",
+        "Uma bússola quebrada"
+      ],
+      "hope_feature": {
+        "name": "Segurem Eles",
+        "cost_hope": 3,
+        "effect": "Ao acertar ataque com arma, use o mesmo teste contra 2 adversários adicionais no alcance."
+      },
+      "class_features": [
+        {
+          "name": "Marca da Presa",
+          "effect": "Gaste 1 Esperança e ataque um alvo; se acertar, além do dano normal ele fica Marcado e você ganha benefícios contra ele."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Rastreador",
+          "conjuration_attribute": "Agilidade",
+          "fundamental": [
+            "Predador Implacável: ao fazer rolagem de dano, marque 1 PF para +1 na Proficiência; ao causar dano grave, alvo marca 1 PF.",
+            "Avante: ao viajar para lugar já visitado ou do qual possua objeto, identifica o caminho mais curto."
+          ],
+          "specialization": [
+            "Predador Veloz: quando adversário Marcado ataca você, recebe +2 na Evasão."
+          ],
+          "mastery": [
+            "Predador Apex: antes de atacar adversário Marcado, pode gastar 1 Esperança; em sucesso, mestre perde 1 Medo."
+          ]
+        },
+        {
+          "name": "Treinador",
+          "conjuration_attribute": "Agilidade",
+          "fundamental": [
+            "Companheiro Animal: possui um companheiro animal com ficha própria, experiências e progressão."
+          ],
+          "specialization": [
+            "Treinamento Especializado: escolha opção de aumento de nível adicional para o companheiro.",
+            "Unidos na Batalha: se adversário corpo a corpo do companheiro atacar você, recebe +2 na Evasão."
+          ],
+          "mastery": [
+            "Treinamento Avançado: escolha duas opções de aumento de nível adicionais para o companheiro.",
+            "Amigo Leal: uma vez por descanso longo, você e o companheiro podem sofrer dano um pelo outro."
+          ]
+        }
+      ],
+      "companion_animal": {
+        "starting_evasion": 10,
+        "starting_damage_die": "d6",
+        "starting_range": "Corpo a corpo",
+        "starting_experiences": [
+          "Duas experiências criadas com base na história e treinamento, ambas começando em +2."
+        ],
+        "damage_model": "Quando sofre qualquer dano, o companheiro marca 1 PF em vez de usar PV tradicionais.",
+        "level_up_options_examples": [
+          "Afago",
+          "Apegado",
+          "Atento",
+          "Blindado",
+          "Resiliente",
+          "Inteligente",
+          "Feroz"
+        ]
+      }
+    },
+    {
+      "name": "Serafim",
+      "domains": [
+        "Valor",
+        "Esplendor"
+      ],
+      "starting_evasion": 9,
+      "starting_hp": 7,
+      "starting_class_items_choice": [
+        "Algumas oferendas",
+        "Um símbolo de seu deus"
+      ],
+      "hope_feature": {
+        "name": "Alicerce da Vida",
+        "cost_hope": 3,
+        "effect": "Recupera 1 PV de um aliado próximo."
+      },
+      "class_features": [
+        {
+          "name": "Dados de Oração",
+          "effect": "No início de cada sessão, role número de d4 igual ao atributo de conjuração da subclasse. Esses dados podem reduzir dano, somar a rolagens ou gerar Esperança."
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Portador Divino",
+          "conjuration_attribute": "Força",
+          "fundamental": [
+            "Arma Espiritual: arma corpo a corpo ou muito próxima pode voar para atacar alvo próximo e retornar; pode marcar 1 PF para escolher alvo adicional.",
+            "Toque Piedoso: uma vez por descanso longo, toca criatura para recuperar 2 PV ou 2 PF."
+          ],
+          "specialization": [
+            "Devoção: ao rolar Dados de Oração, role dado adicional e descarte o menor; Toque Piedoso passa a 2 vezes por descanso longo."
+          ],
+          "mastery": [
+            "Ressonância Sagrada: ao rolar dano da Arma Espiritual, se dois ou mais dados tiverem mesmo valor, dobre cada dado repetido."
+          ]
+        },
+        {
+          "name": "Sentinela Alada",
+          "conjuration_attribute": "Força",
+          "fundamental": [
+            "Asas de Luz: você pode voar; enquanto voa, pode marcar 1 PF para carregar criatura voluntária ou gastar 1 Esperança para causar 1d8 de dano adicional em ataque bem-sucedido."
+          ],
+          "specialization": [
+            "Visagem Etérea: enquanto voando, vantagem em testes de Presença; em sucesso com Esperança em Presença, faz o mestre perder 1 Medo em vez de você ganhar Esperança."
+          ],
+          "mastery": [
+            "Ascensão: +4 permanente no limiar de dano grave.",
+            "Poder dos Deuses: dano adicional de Asas de Luz sobe para 1d12."
+          ]
+        }
+      ]
+    }
+  ],
+  "ancestries": [
+    {
+      "name": "Anão",
+      "abilities": [
+        "Pele Espessa: ao sofrer dano menor, pode marcar 2 PF em vez de 1 PV.",
+        "Vigoroso: gaste 3 Esperança para reduzir à metade o dano físico sofrido."
+      ]
+    },
+    {
+      "name": "Clank",
+      "abilities": [
+        "Projeto Intencional: durante a criação, escolha uma Experiência ligada ao propósito da sua construção e receba +1 permanente nela.",
+        "Eficiente: em descanso curto, pode escolher um movimento de descanso longo em vez de um de descanso curto."
+      ]
+    },
+    {
+      "name": "Drakona",
+      "abilities": [
+        "Escamas: quando sofrer dano grave, pode marcar 1 PF para marcar 1 PV a menos.",
+        "Sopro Elemental: escolha um elemento; use como arma de Instinto, muito próximo, d8 mágico com Proficiência."
+      ]
+    },
+    {
+      "name": "Elfo",
+      "abilities": [
+        "Reação Rápida: marque 1 PF para receber vantagem em teste de reação.",
+        "Transe Celestial: durante um descanso, pode escolher um movimento de repouso adicional."
+      ]
+    },
+    {
+      "name": "Fada",
+      "abilities": [
+        "Testar a Sorte: uma vez por sessão, após você ou aliado próximo fazer teste, gaste 3 Esperança para rolar novamente os Dados de Dualidade.",
+        "Asas: você pode voar; após ser atacado enquanto voa, marque 1 PF para +2 na Evasão contra esse ataque."
+      ]
+    },
+    {
+      "name": "Fauno",
+      "abilities": [
+        "Salto Caprino: pode saltar para qualquer ponto em alcance próximo como movimento normal.",
+        "Coice: ao acertar ataque corpo a corpo, marque 1 PF para causar 2d6 de dano adicional e empurrar alvo ou a si mesmo para muito próximo."
+      ]
+    },
+    {
+      "name": "Fungril",
+      "abilities": [
+        "Conexão Fungril: teste de Instinto (12) para conversar pela rede micelial a qualquer distância.",
+        "Vínculo Mortal: tocando cadáver recém-morto, marque 1 PF para extrair memória ligada a emoção/sensação."
+      ]
+    },
+    {
+      "name": "Galapa",
+      "abilities": [
+        "Carapaça: bônus nos limiares de dano igual à Proficiência.",
+        "Retração: marque 1 PF para entrar na carapaça; ganha resistência a dano físico, desvantagem em testes e não pode se mover."
+      ]
+    },
+    {
+      "name": "Gigante",
+      "abilities": [
+        "Resistência: receba 1 PV adicional na criação.",
+        "Alcance: trate efeitos corpo a corpo como se fossem de alcance muito próximo."
+      ]
+    },
+    {
+      "name": "Goblin",
+      "abilities": [
+        "Passo Firme: ignora desvantagem em testes de Agilidade.",
+        "Cheiro de Perigo: uma vez por descanso, marque 1 PF para forçar um adversário a refazer um teste de ataque contra você ou aliado muito próximo."
+      ]
+    },
+    {
+      "name": "Humano",
+      "abilities": [
+        "Resiliência: receba 1 PF adicional na criação.",
+        "Adaptabilidade: ao falhar em teste que usou Experiência, marque 1 PF para rolar novamente."
+      ]
+    },
+    {
+      "name": "Infernis",
+      "abilities": [
+        "Aspecto Apavorante: vantagem em testes para intimidar criaturas hostis.",
+        "Segunda habilidade do recorte não ficou totalmente legível no trecho extraído; revisar a página 65 ao transformar o PDF das ancestralidades em JSON definitivo."
+      ]
+    },
+    {
+      "name": "Katari",
+      "abilities": [
+        "Instinto Felino: ao fazer teste de Agilidade, gaste 2 Esperança para rolar novamente seu Dado de Esperança.",
+        "Garras Retráteis: teste de Agilidade para arranhar alvo corpo a corpo; em sucesso, ele fica temporariamente Vulnerável."
+      ]
+    },
+    {
+      "name": "Orc",
+      "abilities": [
+        "Robusto: quando tem apenas 1 PV restante, ataques contra você têm desvantagem.",
+        "Presas: ao acertar ataque corpo a corpo, gaste 1 Esperança para causar 1d6 de dano adicional."
+      ]
+    },
+    {
+      "name": "Pequenino",
+      "abilities": [
+        "Talismã da Sorte: no início de cada sessão, todos do grupo recebem 1 Esperança.",
+        "Senso de Direção: ao rolar 1 no Dado de Esperança, pode rolá-lo novamente."
+      ]
+    },
+    {
+      "name": "Quacho",
+      "abilities": [
+        "Anfíbio: pode respirar e se mover naturalmente debaixo d'água.",
+        "Linguarudo: marque 1 PF para usar a língua como arma de Acuidade, alcance próximo, d12 físico com Proficiência."
+      ]
+    },
+    {
+      "name": "Símio",
+      "abilities": [
+        "Escalador Natural: vantagem em testes de Agilidade envolvendo equilíbrio e escalada.",
+        "Ágil: +1 permanente na Evasão durante a criação."
+      ]
+    }
+  ],
+  "mixed_ancestry_rule": {
+    "name": "Ancestralidade Mista",
+    "summary": "Escolha duas ancestralidades relevantes para o personagem. Pegue a primeira habilidade de uma e a segunda habilidade da outra. Se houver mais de duas ancestralidades narrativas, apenas duas afetam mecanicamente."
+  },
+  "communities": [
+    {
+      "name": "Aristocrática",
+      "adjectives": [
+        "afáveis",
+        "cândidos",
+        "conspiradores",
+        "empreendedores",
+        "exibidos",
+        "imperturbáveis"
+      ],
+      "ability": "Privilégio: vantagem em testes para se relacionar com nobres, negociar preços ou usar reputação."
+    },
+    {
+      "name": "Disciplinada",
+      "adjectives": [
+        "ambiciosos",
+        "benevolentes",
+        "cínicos",
+        "estoicos",
+        "pensativos",
+        "prudentes"
+      ],
+      "ability": "Princípios: anote 3 ditados/valores; 1 vez por descanso, ao incorporá-los na ação atual, pode usar 1d20 como Dado de Esperança."
+    },
+    {
+      "name": "Erudita",
+      "adjectives": [
+        "altivos",
+        "diretos",
+        "eloquentes",
+        "inquisitivos",
+        "pacientes",
+        "sagazes"
+      ],
+      "ability": "Culto: vantagem em testes envolvendo cultura, história ou política de um lugar ou pessoa importante."
+    },
+    {
+      "name": "Fora da Lei",
+      "adjectives": [
+        "calculistas",
+        "espertos",
+        "formidáveis",
+        "perceptivos",
+        "perseverantes",
+        "sagazes"
+      ],
+      "ability": "Malandro: vantagem em testes para negociar com criminosos, perceber mentiras ou encontrar esconderijo seguro."
+    },
+    {
+      "name": "Marítima",
+      "adjectives": [
+        "calejados",
+        "cooperativos",
+        "ferrenhos",
+        "puros",
+        "resolutos",
+        "vivazes"
+      ],
+      "ability": "Conhecer a Maré: ao rolar com Medo, ganha marcador na carta; antes de teste, pode gastar marcadores para +1 por marcador."
+    },
+    {
+      "name": "Montanhesa",
+      "adjectives": [
+        "intrépidos",
+        "indômitos",
+        "leais",
+        "obstinados",
+        "reservados",
+        "teimosos"
+      ],
+      "ability": "Firme: vantagem em testes para cruzar abismos/saliências, orientar-se em ambientes inóspitos e usar conhecimentos de sobrevivência."
+    },
+    {
+      "name": "Nômade",
+      "adjectives": [
+        "alegres",
+        "atentos",
+        "confiáveis",
+        "heterodoxos",
+        "magnânimos",
+        "misteriosos"
+      ],
+      "ability": "Mochila de Nômade: 1 vez por sessão, gaste 1 Esperança para tirar item mundano útil da mochila."
+    },
+    {
+      "name": "Silvestre",
+      "adjectives": [
+        "leais",
+        "reclusos",
+        "resolutos",
+        "sagazes",
+        "vibrantes",
+        "zelosos"
+      ],
+      "ability": "Pés Leves: vantagem em testes para se mover sem ser ouvido."
+    },
+    {
+      "name": "Subterrânea",
+      "adjectives": [
+        "criativos",
+        "modestos",
+        "engenhosos",
+        "esquivos",
+        "indômitos",
+        "sensatos"
+      ],
+      "ability": "Habituado à Penumbra: vantagem em testes para se esconder, investigar ou perceber detalhes em penumbra ou sombra forte."
+    }
+  ],
+  "equipment_rules": {
+    "weapon_selection": {
+      "summary": "Na criação, escolha uma arma principal de duas mãos OU uma arma principal de uma mão + uma arma secundária de uma mão. Personagens com atributo de conjuração também podem usar armas mágicas.",
+      "proficiency_rule": "No nível 1, Proficiência = 1. O dano da arma deve ser anotado já com a proficiência na ficha (ex.: 1d6+3)."
+    },
+    "armor_selection": {
+      "summary": "Escolha 1 armadura de 1º patamar. Os limiares finais são limiares base + nível. Armadura final = armadura base + bônus de talentos/efeitos.",
+      "damage_reduction_rule": "Ao sofrer dano, pode marcar 1 PA para reduzir a gravidade do dano em 1 limiar."
+    },
+    "default_inventory": [
+      "1 tocha",
+      "15 metros de corda",
+      "suprimentos básicos",
+      "1 punhado de ouro",
+      "escolha 1: poção de vida menor (1d4 PV) ou poção de vigor menor (1d4 PF)",
+      "escolha 1 item específico da classe"
+    ]
+  },
+  "starting_equipment": {
+    "primary_weapons_tier_1": {
+      "physical": [
+        {
+          "name": "Adaga",
+          "attribute": "Acuidade",
+          "range": "Corpo a corpo",
+          "damage": "d8+1 fís",
+          "hands": "Uma mão"
+        },
+        {
+          "name": "Alabarda",
+          "attribute": "Força",
+          "range": "Muito próximo",
+          "damage": "d10+2 fís",
+          "hands": "Duas mãos",
+          "ability": "Inconveniente: -1 em Acuidade"
+        },
+        {
+          "name": "Alfange",
+          "attribute": "Presença",
+          "range": "Corpo a corpo",
+          "damage": "d8+1 fís",
+          "hands": "Uma mão"
+        },
+        {
+          "name": "Arco curto",
+          "attribute": "Agilidade",
+          "range": "Distante",
+          "damage": "d6+3 fís",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Arco longo",
+          "attribute": "Agilidade",
+          "range": "Muito distante",
+          "damage": "d8+3 fís",
+          "hands": "Duas mãos",
+          "ability": "Inconveniente: -1 em Acuidade"
+        },
+        {
+          "name": "Besta",
+          "attribute": "Acuidade",
+          "range": "Distante",
+          "damage": "d6+1 fís",
+          "hands": "Uma mão"
+        },
+        {
+          "name": "Bordão",
+          "attribute": "Instinto",
+          "range": "Corpo a corpo",
+          "damage": "d10+3 fís",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Espada larga",
+          "attribute": "Agilidade",
+          "range": "Corpo a corpo",
+          "damage": "d8 fís",
+          "hands": "Uma mão",
+          "ability": "Confiável: +1 em testes de ataque"
+        },
+        {
+          "name": "Espada longa",
+          "attribute": "Agilidade",
+          "range": "Corpo a corpo",
+          "damage": "d10+3 fís",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Lança",
+          "attribute": "Acuidade",
+          "range": "Muito próximo",
+          "damage": "d8+3 fís",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Maça",
+          "attribute": "Força",
+          "range": "Corpo a corpo",
+          "damage": "d8+1 fís",
+          "hands": "Uma mão"
+        },
+        {
+          "name": "Machado de batalha",
+          "attribute": "Força",
+          "range": "Corpo a corpo",
+          "damage": "d10+3 fís",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Martelo de guerra",
+          "attribute": "Força",
+          "range": "Corpo a corpo",
+          "damage": "d12+3 fís",
+          "hands": "Duas mãos",
+          "ability": "Pesado: -1 em Evasão"
+        },
+        {
+          "name": "Montante",
+          "attribute": "Força",
+          "range": "Corpo a corpo",
+          "damage": "d10+3 fís",
+          "hands": "Duas mãos",
+          "ability": "Enorme: -1 em Evasão; ao acertar, role +1 dado de dano e descarte o menor"
+        },
+        {
+          "name": "Rapieira",
+          "attribute": "Presença",
+          "range": "Corpo a corpo",
+          "damage": "d8 fís",
+          "hands": "Uma mão",
+          "ability": "Veloz: marque 1 PF para atingir outra criatura no alcance"
+        }
+      ],
+      "magical": [
+        {
+          "name": "Anéis luminosos",
+          "attribute": "Agilidade",
+          "range": "Muito próximo",
+          "damage": "d10+2 mág",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Cajado curto",
+          "attribute": "Instinto",
+          "range": "Próximo",
+          "damage": "d8+1 mág",
+          "hands": "Uma mão"
+        },
+        {
+          "name": "Cajado duplo",
+          "attribute": "Instinto",
+          "range": "Distante",
+          "damage": "d6+3 mág",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Cajado grande",
+          "attribute": "Conhecimento",
+          "range": "Muito distante",
+          "damage": "d6 mág",
+          "hands": "Duas mãos",
+          "ability": "Poderoso: +1 dado de dano e descarta o menor ao acertar"
+        },
+        {
+          "name": "Cetro",
+          "attribute": "Presença",
+          "range": "Distante",
+          "damage": "d6 mág",
+          "hands": "Duas mãos",
+          "ability": "Versátil: também pode usar Presença, corpo a corpo, d8"
+        },
+        {
+          "name": "Lâmina do retorno",
+          "attribute": "Acuidade",
+          "range": "Próximo",
+          "damage": "d8 mág",
+          "hands": "Uma mão",
+          "ability": "Retornável"
+        },
+        {
+          "name": "Machado sagrado",
+          "attribute": "Força",
+          "range": "Corpo a corpo",
+          "damage": "d8+1 mág",
+          "hands": "Uma mão"
+        },
+        {
+          "name": "Manoplas arcanas",
+          "attribute": "Força",
+          "range": "Corpo a corpo",
+          "damage": "d10+3 mág",
+          "hands": "Duas mãos"
+        },
+        {
+          "name": "Runas de mão",
+          "attribute": "Instinto",
+          "range": "Muito próximo",
+          "damage": "d10 mág",
+          "hands": "Uma mão"
+        },
+        {
+          "name": "Varinha",
+          "attribute": "Conhecimento",
+          "range": "Distante",
+          "damage": "d6+1 mág",
+          "hands": "Uma mão"
+        }
+      ],
+      "combat_wheelchair_models": [
+        {
+          "name": "Cadeira de rodas leve",
+          "attribute": "Agilidade",
+          "range": "Corpo a corpo",
+          "damage": "d8 fís",
+          "hands": "Uma mão",
+          "ability": "Veloz"
+        },
+        {
+          "name": "Cadeira de rodas pesada",
+          "attribute": "Força",
+          "range": "Corpo a corpo",
+          "damage": "d12+3 fís",
+          "hands": "Duas mãos",
+          "ability": "Pesada: -1 em Evasão"
+        },
+        {
+          "name": "Cadeira de rodas arcana",
+          "attribute": "Conjuração",
+          "range": "Distante",
+          "damage": "d6 fís",
+          "hands": "Uma mão",
+          "ability": "Confiável: +1 em testes de ataque"
+        }
+      ]
+    },
+    "secondary_weapons_tier_1": [
+      {
+        "name": "Adaga pequena",
+        "attribute": "Acuidade",
+        "range": "Corpo a corpo",
+        "damage": "d8 fís",
+        "hands": "Uma mão",
+        "ability": "Par: arma principal causa +2 em alvos corpo a corpo"
+      },
+      {
+        "name": "Besta de mão",
+        "attribute": "Acuidade",
+        "range": "Distante",
+        "damage": "d6+1 fís",
+        "hands": "Uma mão"
+      },
+      {
+        "name": "Chicote",
+        "attribute": "Presença",
+        "range": "Muito próximo",
+        "damage": "d6 fís",
+        "hands": "Uma mão",
+        "ability": "Alarmante"
+      },
+      {
+        "name": "Escudo redondo",
+        "attribute": "Força",
+        "range": "Corpo a corpo",
+        "damage": "d4 fís",
+        "hands": "Uma mão",
+        "ability": "Armadura: +1 PA"
+      },
+      {
+        "name": "Escudo-torre",
+        "attribute": "Força",
+        "range": "Corpo a corpo",
+        "damage": "d6 fís",
+        "hands": "Uma mão",
+        "ability": "Barreira: +2 PA; -1 na Evasão"
+      },
+      {
+        "name": "Espada curta",
+        "attribute": "Agilidade",
+        "range": "Corpo a corpo",
+        "damage": "d8 fís",
+        "hands": "Uma mão",
+        "ability": "Par: arma principal causa +2 em alvos corpo a corpo"
+      },
+      {
+        "name": "Gancho",
+        "attribute": "Acuidade",
+        "range": "Próximo",
+        "damage": "d6 fís",
+        "hands": "Uma mão",
+        "ability": "Gancho: ao acertar, puxa o alvo para corpo a corpo"
+      }
+    ],
+    "armors_tier_1": [
+      {
+        "name": "Gibão",
+        "base_thresholds": [
+          5,
+          11
+        ],
+        "base_armor": 3,
+        "ability": "Flexível: +1 em Evasão"
+      },
+      {
+        "name": "Armadura de couro",
+        "base_thresholds": [
+          6,
+          13
+        ],
+        "base_armor": 3
+      },
+      {
+        "name": "Cota de malha",
+        "base_thresholds": [
+          7,
+          15
+        ],
+        "base_armor": 4,
+        "ability": "Pesada: -1 em Evasão"
+      },
+      {
+        "name": "Armadura de placas",
+        "base_thresholds": [
+          8,
+          17
+        ],
+        "base_armor": 4,
+        "ability": "Muito Pesada: -2 em Evasão; -1 em Agilidade"
+      }
+    ]
+  },
+  "mechanics_for_dashboard": {
+    "sheet_fields": [
+      "nome",
+      "gênero/pronomes",
+      "herança",
+      "classe",
+      "subclasse",
+      "nível",
+      "atributos",
+      "evasão",
+      "armadura",
+      "pontos_de_vida",
+      "pontos_de_fadiga",
+      "esperança",
+      "proficiência",
+      "experiências",
+      "armas_ativas",
+      "armas_no_inventário",
+      "armadura_ativa",
+      "itens",
+      "cartas_de_domínio",
+      "vínculos"
+    ],
+    "damage_model_summary": {
+      "hp_model": "O personagem marca PV conforme a gravidade do dano sofrido.",
+      "armor_model": "Marca 1 PA para reduzir a gravidade do dano em 1 limiar.",
+      "threshold_formula": "limiar_final = limiar_base_da_armadura + nível",
+      "class_starting_fatigue": 6
+    }
+  }
+}
