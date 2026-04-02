@@ -28,23 +28,37 @@ Plataforma web para Daggerheart com backend Supabase, focada em:
 - Supabase (Postgres + Realtime)
 - Vitest
 
-## Configuração
+## Configuracao
 
-1. Ajuste as variáveis em `.env` (já preenchidas no ambiente atual).
-2. Instale dependências e aplique o schema:
+1. Copie o arquivo de exemplo e preencha as credenciais:
+
+```bash
+cp .env.example .env
+```
+
+2. Variaveis obrigatorias para rodar local e na Vercel:
+
+- `SUPABASE_PROJECT_ID`
+- `SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_ACCESS_TOKEN`
+
+3. Instale dependencias e aplique o schema:
 
 ```bash
 npm install
 npm run supabase:apply-schema
 ```
 
-3. (Opcional) Reimporte cartas:
+4. (Opcional) Reimporte cartas:
 
 ```bash
 npm run import:cards -- "C:\\Users\\wesll\\Downloads\\DH-Baralho.pdf"
 ```
 
-4. Rode o app:
+5. Rode o app:
 
 ```bash
 npm run dev
@@ -87,3 +101,4 @@ scripts/
 supabase/
   schema.sql
 ```
+
