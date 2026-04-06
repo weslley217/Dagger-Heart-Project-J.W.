@@ -379,3 +379,64 @@ begin
     null;
   end;
 end $$;
+
+-- ── Migração: NPCs de campanha, ordem de turnos e estado de sessão ──────────
+
+alter table public.campaigns
+  add column if not exists map_tokens jsonb not null default '[]'::jsonb,
+  add column if not exists session_active boolean not null default false;
+
+alter table public.damage_logs
+  add column if not exists campaign_npc_id uuid;
+
+create table if not exists public.campaign_npcs (
+  id uuid primary key default gen_random_uuid(),
+  campaign_id uuid not null references public.campaigns(id) on delete cascade,
+  name text not null,
+  npc_type text not null default 'monster' check (npc_type in ('monster','npc','boss')),
+  level integer not null default 1,
+  description text,
+  total_hp integer not null default 10,
+  current_hp integer not null default 10,
+  armor_max integer not null default 0,
+  armor_current integer not null default 0,
+  threshold1 integer not null default 5,
+  threshold2 integer not null default 10,
+  evasion integer not null default 10,
+  damage_dice text,
+  attack_bonus integer not null default 0,
+  conditions jsonb not null default '[]'::jsonb,
+  health_indicator text not null default 'unknown'
+    check (health_indicator in ('plena_forma','ferido','gravemente_ferido','critico','desacordado','unknown')),
+  visible_to_players boolean not null default false,
+  token_x float,
+  token_y float,
+  token_color text not null default '#ef4444',
+  token_icon text not null default 'monster',
+  is_downed boolean not null default false,
+  traits jsonb not null default '[]'::jsonb,
+  actions jsonb not null default '[]'::jsonb,
+  notes text,
+  created_at timestamptz not null default timezone('utc',now()),
+  updated_at timestamptz not null default timezone('utc',now())
+);
+
+create table if not exists public.campaign_turns (
+  id uuid primary key default gen_random_uuid(),
+  campaign_id uuid not null references public.campaigns(id) on delete cascade,
+  entity_type text not null check (entity_type in ('player','npc')),
+  entity_id uuid not null,
+  entity_name text not null,
+  initiative integer not null default 0,
+  position integer not null default 0,
+  is_active boolean not null default false,
+  created_at timestamptz not null default timezone('utc',now())
+);
+
+do $$
+begin
+  begin alter publication supabase_realtime add table public.campaign_npcs;
+  exception when duplicate_object then null; end;
+  begin alter publication supabase_realtime add table public.campaign_turns;
+  exception when duplicate_object then null; end;
+end $$;

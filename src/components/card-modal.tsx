@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
+import { CardPageCanvas } from "@/components/ui/card-page-canvas";
 import { emitLiveRefresh } from "@/hooks/use-live-refresh";
 import { describeCardEffect } from "@/rules/cards/engine";
 import type { CharacterCardSummary } from "@/types/domain";
@@ -69,10 +70,10 @@ export function CardModal({
       <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="rounded-[26px] border border-white/8 bg-black/20 p-4">
           {activeCard.sourcePdfKey ? (
-            <iframe
-              title={`Previa de ${activeCard.name}`}
-              src={`/api/files/${activeCard.sourcePdfKey}#page=${activeCard.sourcePage ?? 1}`}
-              className="h-[520px] w-full rounded-2xl border border-white/8 bg-white"
+            <CardPageCanvas
+              sourcePdfKey={activeCard.sourcePdfKey}
+              sourcePage={activeCard.sourcePage ?? 1}
+              className="rounded-2xl border border-white/8"
             />
           ) : (
             <div className="flex h-[520px] items-center justify-center rounded-2xl border border-dashed border-white/10 bg-[radial-gradient(circle_at_top,rgba(212,177,106,0.18),transparent_50%),rgba(255,255,255,0.04)] p-8 text-center">

@@ -161,6 +161,13 @@ export function PlayerDashboard({ characters, cards, campaigns }: PlayerDashboar
                   >
                     {joiningCampaignId === campaign.id ? "Entrando..." : "Entrar na campanha"}
                   </Button>
+                  <a
+                    href={`/player/campaigns/${campaign.id}/session`}
+                    className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/20 transition-colors"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Sessão ao vivo
+                  </a>
                 </div>
               ))}
           </div>

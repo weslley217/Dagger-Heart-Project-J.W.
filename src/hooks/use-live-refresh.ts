@@ -15,6 +15,8 @@ const REALTIME_TABLES = [
   "campaign_character_cards",
   "damage_logs",
   "effect_logs",
+  "campaign_npcs",
+  "campaign_turns",
 ] as const;
 
 export function emitLiveRefresh(reason: string) {
@@ -37,6 +39,7 @@ export function useLiveRefresh(intervalMs = 5000) {
     const supabase = getBrowserSupabase();
     const channel =
       typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(CHANNEL) : null;
+    // Polling is a fallback only — Realtime handles most updates
     const interval = window.setInterval(() => refresh(), intervalMs);
     const realtimeChannel = supabase?.channel(`${CHANNEL}-realtime`);
 
