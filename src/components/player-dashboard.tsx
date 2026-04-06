@@ -262,12 +262,6 @@ export function PlayerDashboard({ characters, cards, campaigns }: PlayerDashboar
         <CharacterWizard availableCards={cards} campaigns={campaigns} />
       )}
 
-      <SurfaceCard>
-        <p className="text-xs uppercase tracking-[0.24em] text-white/45">Classes base</p>
-        <p className="mt-3 text-3xl font-semibold text-white">{classes.length}</p>
-        <p className="mt-2 text-sm text-white/55">Dados carregados do livro básico.</p>
-      </SurfaceCard>
-
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
     </AppShell>
   );

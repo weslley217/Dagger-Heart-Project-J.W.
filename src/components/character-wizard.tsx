@@ -691,7 +691,11 @@ export function CharacterWizard({ availableCards, campaigns = [] }: CharacterWiz
           {/* Class info panel */}
           {selectedClass ? (
             <div className="rounded-2xl border border-white/8 bg-black/20 p-4 space-y-3">
-              <p className="text-xs uppercase tracking-[0.22em] text-white/45">Domínios da classe</p>
+              {/* Description */}
+              {selectedClass.description && (
+                <p className="text-sm leading-7 text-white/70">{selectedClass.description}</p>
+              )}
+              {/* Domains */}
               <div className="flex flex-wrap gap-2">
                 {selectedClass.domains.map((domainKey) => (
                   <span key={domainKey} className="rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-3 py-1 text-xs font-medium text-[var(--accent)]">
@@ -712,8 +716,63 @@ export function CharacterWizard({ availableCards, campaigns = [] }: CharacterWiz
                   </div>
                 ))}
               </div>
+              {/* Subclass summary */}
+              {(() => {
+                const sub = selectedClass.subclasses.find((s) => s.key === subclassKey);
+                return sub ? (
+                  <div className="rounded-xl border border-white/8 bg-black/20 px-3 py-2.5 space-y-1">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/40">{sub.label}</p>
+                    <p className="text-xs leading-6 text-white/60">{sub.summary}</p>
+                    {sub.spellcastingTrait && (
+                      <p className="text-[10px] text-white/40">Atributo de conjuração: <span className="text-white/60">{sub.spellcastingTrait}</span></p>
+                    )}
+                  </div>
+                ) : null;
+              })()}
+              {/* Automatic class cards */}
+              {automaticCards.filter((c) => c.classKey === selectedClass.key || c.subclassKey === subclassKey).length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-white/40">Cartas da classe</p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {automaticCards
+                      .filter((c) => c.classKey === selectedClass.key || c.subclassKey === subclassKey)
+                      .slice(0, 4)
+                      .map((card) => (
+                        <AutoCardChip key={card.id} card={card} />
+                      ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : null}
+
+          {/* Ancestry reference panel */}
+          {automaticCards.filter((c) => c.category === "ancestralidade").length > 0 && (
+            <div className="rounded-2xl border border-white/8 bg-black/20 p-4 space-y-2">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-white/40">Cartas de ancestralidade — {selectedAncestryLabel}</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {automaticCards
+                  .filter((c) => c.category === "ancestralidade")
+                  .map((card) => (
+                    <AutoCardChip key={card.id} card={card} />
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Community reference panel */}
+          {automaticCards.filter((c) => c.category === "comunidade").length > 0 && (
+            <div className="rounded-2xl border border-white/8 bg-black/20 p-4 space-y-2">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-white/40">Cartas de comunidade — {selectedCommunityLabel}</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {automaticCards
+                  .filter((c) => c.category === "comunidade")
+                  .map((card) => (
+                    <AutoCardChip key={card.id} card={card} />
+                  ))}
+              </div>
+            </div>
+          )}
         </SurfaceCard>
       )}
 
@@ -853,29 +912,41 @@ export function CharacterWizard({ availableCards, campaigns = [] }: CharacterWiz
                 { slot: "secondaryWeapon" as const, label: "Arma secundária", item: equipment.secondaryWeapon },
                 { slot: "armor" as const, label: "Armadura", item: equipment.armor },
               ] as const
-            ).map(({ slot, label, item }) => (
-              <div key={slot} className="rounded-2xl border border-white/8 bg-black/20 p-3">
-                <p className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</p>
-                {item ? (
-                  <div className="mt-2 space-y-1">
-                    <p className="text-sm font-semibold text-white">{item.name}</p>
-                    <p className="text-xs text-white/55">{equipmentText(item)}</p>
-                    {"ability" in item && item.ability ? (
-                      <p className="text-xs text-[var(--accent)]">{item.ability}</p>
-                    ) : null}
-                  </div>
-                ) : (
-                  <p className="mt-2 text-xs text-white/50">Nenhum selecionado.</p>
-                )}
-                <Button
-                  variant="secondary"
-                  className="mt-3 w-full"
-                  onClick={() => openItemModal(slot, `Selecionar ${label.toLowerCase()}`)}
-                >
-                  Escolher
-                </Button>
-              </div>
-            ))}
+            ).map(({ slot, label, item }) => {
+              const matchingCard = item
+                ? availableCards.find((c) => normalize(c.name) === normalize(item.name))
+                : undefined;
+              return (
+                <div key={slot} className="rounded-2xl border border-white/8 bg-black/20 p-3 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</p>
+                  {item ? (
+                    <div className="space-y-1">
+                      <p className="text-sm font-semibold text-white">{item.name}</p>
+                      <p className="text-xs text-white/55">{equipmentText(item)}</p>
+                      {"ability" in item && item.ability ? (
+                        <p className="text-xs text-[var(--accent)]">{item.ability}</p>
+                      ) : null}
+                      {matchingCard?.sourcePdfKey && (
+                        <CardPageCanvas
+                          sourcePdfKey={matchingCard.sourcePdfKey}
+                          sourcePage={matchingCard.sourcePage ?? 1}
+                          className="mt-2 rounded-xl border border-white/10 w-full"
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-xs text-white/50">Nenhum selecionado.</p>
+                  )}
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => openItemModal(slot, `Selecionar ${label.toLowerCase()}`)}
+                  >
+                    Escolher
+                  </Button>
+                </div>
+              );
+            })}
           </div>
 
           <div className="rounded-2xl border border-white/8 bg-black/20 p-4">

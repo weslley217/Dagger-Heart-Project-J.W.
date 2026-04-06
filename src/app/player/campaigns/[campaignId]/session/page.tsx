@@ -13,10 +13,10 @@ export default async function PlayerSessionPage({ params }: Props) {
   const { campaignId } = await params;
 
   const [campaignRes, charsRes, npcsRes, turnsRes] = await Promise.all([
-    db.from("campaigns").select("id, name, session_active, map_tokens").eq("id", campaignId).single(),
+    db.from("campaigns").select("id, name, session_active, map_tokens, map_shapes").eq("id", campaignId).single(),
     db
       .from("campaign_characters")
-      .select("id, name, level, class_key, current_hp, total_hp, armor_current, armor_max, threshold1, threshold2, evasion, conditions, resources, is_downed, equipment")
+      .select("id, name, level, class_key, current_hp, total_hp, armor_current, armor_max, threshold1, threshold2, evasion, conditions, resources, is_downed, equipment, campaign_character_cards(id, card_id, status, uses_max, uses_current, cards(id, name, text, category, effects, source_pdf_key, source_page))")
       .eq("campaign_id", campaignId)
       .eq("player_id", session.userId)
       .eq("status", "active"),

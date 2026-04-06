@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Activity, Flame, Heart, Shield, Sparkles, Swords, Wind } from "lucide-react";
+import { Activity, BookOpen, Dices, Flame, Heart, Sword, Swords, Zap } from "lucide-react";
 import { SurfaceCard } from "@/components/ui/surface-card";
-import { MiniMap, type MapToken } from "@/components/mini-map";
-import { useLiveRefresh } from "@/hooks/use-live-refresh";
+import { MiniMap, type MapToken, type MapShape } from "@/components/mini-map";
+import { useLiveRefresh, emitLiveRefresh } from "@/hooks/use-live-refresh";
 
 const HEALTH_LABELS: Record<string, { label: string; color: string; emoji: string }> = {
   plena_forma:       { label: "Plena forma",       color: "text-emerald-400", emoji: "💪" },
@@ -15,6 +15,12 @@ const HEALTH_LABELS: Record<string, { label: string; color: string; emoji: strin
   unknown:           { label: "Desconhecido",       color: "text-white/40",    emoji: "❓" },
 };
 
+type CharCard = {
+  id: string; card_id: string; status: string;
+  uses_max: number | null; uses_current: number | null;
+  cards: { id: string; name: string; text: string; category: string; effects: unknown; source_pdf_key: string | null; source_page: number | null } | null;
+};
+
 type Char = {
   id: string; name: string; level: number; class_key: string;
   current_hp: number; total_hp: number; armor_current: number; armor_max: number;
@@ -22,6 +28,7 @@ type Char = {
   conditions: Array<{ label: string; duration?: number }>;
   resources: Record<string, number>; is_downed: boolean;
   equipment: Record<string, unknown>;
+  campaign_character_cards: CharCard[];
 };
 
 type Npc = {
@@ -47,6 +54,7 @@ function parseChar(raw: Record<string, unknown>): Char {
     resources: (typeof raw.resources === "object" && raw.resources ? raw.resources : {}) as Record<string, number>,
     is_downed: Boolean(raw.is_downed),
     equipment: (typeof raw.equipment === "object" && raw.equipment ? raw.equipment : {}) as Record<string, unknown>,
+    campaign_character_cards: (Array.isArray(raw.campaign_character_cards) ? raw.campaign_character_cards : []) as CharCard[],
   };
 }
 
@@ -116,6 +124,10 @@ export function PlayerSessionView({
     position: Number(t.position ?? 0), is_active: Boolean(t.is_active),
   })).sort((a, b) => a.position - b.position);
 
+  const mapShapes: MapShape[] = Array.isArray((campaignRaw as Record<string, unknown>).map_shapes)
+    ? ((campaignRaw as Record<string, unknown>).map_shapes as MapShape[])
+    : [];
+
   const mapTokens: MapToken[] = [
     ...(Array.isArray(campaignRaw.map_tokens) ? (campaignRaw.map_tokens as MapToken[]) : []),
   ].filter((t) => {
@@ -131,6 +143,54 @@ export function PlayerSessionView({
 
   const activeTurn = turns.find((t) => t.is_active);
   const isMyTurn = char && activeTurn?.entity_id === char.id;
+
+  // ── Resource adjustment ──────────────────────────────────────
+  const [adjustBusy, setAdjustBusy] = useState<string | null>(null);
+
+  async function adjustResource(key: "hope" | "fatigue" | "stress" | "currentHp" | "armorCurrent", delta: number) {
+    if (!char) return;
+    const busyKey = `${char.id}-${key}`;
+    setAdjustBusy(busyKey);
+    try {
+      await fetch("/api/characters/adjust", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ campaignCharacterId: char.id, delta: { [key]: delta } }),
+      });
+      emitLiveRefresh("turns");
+    } finally {
+      setAdjustBusy(null);
+    }
+  }
+
+  // ── Damage dice roller ───────────────────────────────────────
+  type DiceLog = { id: number; roll: number; bonus: number; total: number; label: string };
+  const [diceLog, setDiceLog] = useState<DiceLog[]>([]);
+  const [diceBonus, setDiceBonus] = useState(0);
+  const [diceSides, setDiceSides] = useState(12);
+
+  function rollDice() {
+    const roll = Math.floor(Math.random() * diceSides) + 1;
+    const total = roll + diceBonus;
+    const entry: DiceLog = { id: Date.now(), roll, bonus: diceBonus, total, label: `d${diceSides}+${diceBonus}` };
+    setDiceLog((prev) => [entry, ...prev].slice(0, 10));
+  }
+
+  // ── Card usage tracking (local — resets on page reload) ──────
+  const [usedCardIds, setUsedCardIds] = useState<Set<string>>(new Set());
+
+  function toggleCardUsed(cardId: string) {
+    setUsedCardIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(cardId)) next.delete(cardId);
+      else next.add(cardId);
+      return next;
+    });
+  }
+
+  function resetCards() {
+    setUsedCardIds(new Set());
+  }
 
   if (!sessionActive) {
     return (
@@ -247,6 +307,134 @@ export function PlayerSessionView({
             )}
           </SurfaceCard>
 
+          {/* ── Resource action buttons ── */}
+          <SurfaceCard className="space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-[var(--accent)]" />
+                <p className="text-sm font-semibold text-white">Ações de sessão</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {([
+                { key: "hope" as const, label: "Esperança", color: "text-yellow-400", bg: "bg-yellow-400/10 border-yellow-400/20" },
+                { key: "stress" as const, label: "Estresse", color: "text-rose-400", bg: "bg-rose-400/10 border-rose-400/20" },
+                { key: "fatigue" as const, label: "Fadiga", color: "text-purple-400", bg: "bg-purple-400/10 border-purple-400/20" },
+              ] as const).map(({ key, label, color, bg }) => {
+                const val = char.resources[key] ?? 0;
+                const busy = adjustBusy === `${char.id}-${key}`;
+                return (
+                  <div key={key} className={`rounded-xl border p-3 space-y-2 ${bg}`}>
+                    <p className={`text-xs font-semibold uppercase tracking-widest ${color}`}>{label}</p>
+                    <p className={`text-2xl font-bold ${color}`}>{val}</p>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => adjustResource(key, -1)}
+                        disabled={!!busy || val <= 0}
+                        className="flex-1 rounded-lg bg-white/8 py-1 text-sm font-bold text-white/60 hover:bg-white/15 disabled:opacity-30 transition-colors"
+                      >−</button>
+                      <button
+                        onClick={() => adjustResource(key, 1)}
+                        disabled={!!busy}
+                        className="flex-1 rounded-lg bg-white/8 py-1 text-sm font-bold text-white/60 hover:bg-white/15 disabled:opacity-30 transition-colors"
+                      >+</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </SurfaceCard>
+
+          {/* ── Damage dice roller ── */}
+          <SurfaceCard className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Dices className="h-4 w-4 text-[var(--accent)]" />
+              <p className="text-sm font-semibold text-white">Rolar dano</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                className="field text-sm w-28"
+                value={diceSides}
+                onChange={(e) => setDiceSides(Number(e.target.value))}
+              >
+                {[4, 6, 8, 10, 12, 20].map((d) => <option key={d} value={d}>d{d}</option>)}
+              </select>
+              <span className="text-white/40 text-sm">+</span>
+              <input
+                type="number"
+                className="field text-sm w-20"
+                value={diceBonus}
+                onChange={(e) => setDiceBonus(Number(e.target.value || 0))}
+                placeholder="bônus"
+              />
+              <button
+                onClick={rollDice}
+                className="flex items-center gap-2 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-sm font-bold text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors"
+              >
+                <Dices className="h-4 w-4" /> Rolar
+              </button>
+            </div>
+            {diceLog.length > 0 && (
+              <div className="space-y-1">
+                {diceLog.map((entry, i) => (
+                  <div key={entry.id} className={`flex items-center justify-between rounded-lg px-3 py-1.5 text-sm ${i === 0 ? "bg-[var(--accent)]/10 border border-[var(--accent)]/20" : "bg-white/4"}`}>
+                    <span className="text-white/50">{entry.label}</span>
+                    <span className={`font-bold ${i === 0 ? "text-[var(--accent)] text-lg" : "text-white/70"}`}>{entry.total}</span>
+                    <span className="text-white/30 text-xs">({entry.roll} + {entry.bonus})</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </SurfaceCard>
+
+          {/* ── Cards / Abilities ── */}
+          {char.campaign_character_cards.length > 0 && (
+            <SurfaceCard className="space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-[var(--accent)]" />
+                  <p className="text-sm font-semibold text-white">Cartas e habilidades</p>
+                </div>
+                {usedCardIds.size > 0 && (
+                  <button
+                    onClick={resetCards}
+                    className="text-xs text-white/40 hover:text-white/70 transition-colors"
+                  >
+                    Descanso — restaurar
+                  </button>
+                )}
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {char.campaign_character_cards.map((cc) => {
+                  const card = cc.cards;
+                  if (!card) return null;
+                  const used = usedCardIds.has(cc.card_id);
+                  return (
+                    <button
+                      key={cc.id}
+                      onClick={() => toggleCardUsed(cc.card_id)}
+                      className={`rounded-xl border p-3 text-left transition-all ${
+                        used
+                          ? "border-white/8 bg-white/3 opacity-50"
+                          : "border-[var(--accent)]/20 bg-[var(--accent)]/5 hover:bg-[var(--accent)]/10"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <p className={`text-sm font-semibold ${used ? "text-white/40 line-through" : "text-white"}`}>
+                          {card.name}
+                        </p>
+                        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${used ? "bg-white/8 text-white/30" : "bg-[var(--accent)]/20 text-[var(--accent)]"}`}>
+                          {used ? "Usada" : "Disponível"}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs leading-5 text-white/50 line-clamp-2">{card.text}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </SurfaceCard>
+          )}
+
           {/* Equipment summary */}
           {(char.equipment.primaryWeapon || char.equipment.secondaryWeapon || char.equipment.armor) && (
             <SurfaceCard className="space-y-3">
@@ -354,12 +542,10 @@ export function PlayerSessionView({
       {/* Mini-map (read-only for player) */}
       {mapTokens.length > 0 && (
         <SurfaceCard>
-          <MiniMap tokens={mapTokens} readonly />
+          <MiniMap tokens={mapTokens} shapes={mapShapes} readonly />
         </SurfaceCard>
       )}
     </div>
   );
 }
 
-// fix missing import
-import { Sword } from "lucide-react";

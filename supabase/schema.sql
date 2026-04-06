@@ -433,6 +433,10 @@ create table if not exists public.campaign_turns (
   created_at timestamptz not null default timezone('utc',now())
 );
 
+-- ── Migração: mapa com formas desenhadas ────────────────────────────────────
+alter table public.campaigns
+  add column if not exists map_shapes jsonb not null default '[]'::jsonb;
+
 do $$
 begin
   begin alter publication supabase_realtime add table public.campaign_npcs;

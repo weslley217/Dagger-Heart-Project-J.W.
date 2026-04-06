@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Swords, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronRight, Swords, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { emitLiveRefresh } from "@/hooks/use-live-refresh";
 
@@ -22,28 +22,19 @@ type Props = {
   availableNpcs: Array<{ id: string; name: string }>;
 };
 
+// Class/entity color helpers
+const ENTITY_COLORS: Record<string, string> = {
+  player: "#3b82f6",
+  npc: "#ef4444",
+  boss: "#f97316",
+};
+
 export function TurnTracker({ campaignId, turns, availablePlayers, availableNpcs }: Props) {
   const [newType, setNewType] = useState<"player" | "npc">("player");
   const [newEntityId, setNewEntityId] = useState("");
-  const [newInitiative, setNewInitiative] = useState(10);
   const [busy, setBusy] = useState(false);
 
   const sorted = [...turns].sort((a, b) => a.position - b.position);
-  const activeIdx = sorted.findIndex((t) => t.is_active);
-
-  async function postTurns(url: string, body: object) {
-    setBusy(true);
-    try {
-      await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      emitLiveRefresh("turns");
-    } finally {
-      setBusy(false);
-    }
-  }
 
   async function putTurns(entries: TurnEntry[]) {
     setBusy(true);
@@ -66,30 +57,53 @@ export function TurnTracker({ campaignId, turns, availablePlayers, availableNpcs
     }
   }
 
+  async function advanceTurn(action: "next" | "prev") {
+    setBusy(true);
+    try {
+      await fetch(`/api/master/campaigns/${campaignId}/turns`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+      emitLiveRefresh("turns");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function addEntry() {
     const entityList = newType === "player" ? availablePlayers : availableNpcs;
     const entity = entityList.find((e) => e.id === newEntityId);
     if (!entity) return;
+
+    // Check not already added
+    if (sorted.find((t) => t.entity_id === entity.id)) return;
 
     const newEntry: TurnEntry = {
       id: crypto.randomUUID(),
       entity_type: newType,
       entity_id: entity.id,
       entity_name: entity.name,
-      initiative: newInitiative,
+      initiative: 0,
       position: sorted.length,
       is_active: sorted.length === 0,
     };
 
-    const allByInitiative = [...sorted, newEntry].sort((a, b) => b.initiative - a.initiative);
-    await putTurns(allByInitiative);
+    await putTurns([...sorted, newEntry]);
     setNewEntityId("");
-    setNewInitiative(10);
   }
 
-  async function removeEntry(id: string) {
-    const remaining = sorted.filter((t) => t.id !== id);
-    await putTurns(remaining);
+  async function moveEntry(idx: number, direction: "up" | "down") {
+    const newList = [...sorted];
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= newList.length) return;
+    [newList[idx], newList[swapIdx]] = [newList[swapIdx], newList[idx]];
+    await putTurns(newList);
+  }
+
+  async function removeEntry(idx: number) {
+    const newList = sorted.filter((_, i) => i !== idx);
+    await putTurns(newList);
   }
 
   async function clearAll() {
@@ -104,8 +118,8 @@ export function TurnTracker({ campaignId, turns, availablePlayers, availableNpcs
           <p className="text-sm font-semibold text-white">Ordem de turnos</p>
         </div>
         {sorted.length > 0 && (
-          <Button variant="ghost" onClick={clearAll} disabled={busy}>
-            <Trash2 className="mr-1 h-3 w-3" /> Limpar
+          <Button variant="ghost" onClick={clearAll} disabled={busy} className="text-xs gap-1">
+            <Trash2 className="h-3 w-3" /> Limpar tudo
           </Button>
         )}
       </div>
@@ -116,70 +130,92 @@ export function TurnTracker({ campaignId, turns, availablePlayers, availableNpcs
           {sorted.map((turn, idx) => (
             <div
               key={turn.id}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-3 py-2.5 transition-all ${
                 turn.is_active
-                  ? "border border-[var(--accent)]/40 bg-[var(--accent)]/10"
+                  ? "border border-[var(--accent)]/40 bg-[var(--accent)]/10 shadow-[0_0_12px_rgba(213,177,106,0.15)]"
                   : "border border-white/6 bg-white/4"
               }`}
             >
-              <span className="w-5 text-center text-xs font-bold text-white/40">{idx + 1}</span>
+              {/* Position badge */}
+              <span className="w-5 shrink-0 text-center text-xs font-bold text-white/30">{idx + 1}</span>
+
+              {/* Entity token */}
               <div
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                style={{ background: turn.entity_type === "npc" ? "#ef4444" : "#3b82f6" }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white shadow"
+                style={{ background: ENTITY_COLORS[turn.entity_type] ?? "#6b7280" }}
               >
                 {turn.entity_name.charAt(0).toUpperCase()}
               </div>
+
+              {/* Name + type */}
               <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-semibold text-white">{turn.entity_name}</p>
-                <p className="text-[10px] text-white/40">
-                  {turn.entity_type === "player" ? "Jogador" : "NPC"} · Init {turn.initiative}
+                <p className={`truncate text-sm font-semibold ${turn.is_active ? "text-[var(--accent)]" : "text-white"}`}>
+                  {turn.entity_name}
+                </p>
+                <p className="text-[10px] text-white/35">
+                  {turn.entity_type === "player" ? "Jogador" : "NPC"}
                 </p>
               </div>
+
               {turn.is_active && (
-                <span className="rounded-full bg-[var(--accent)]/20 px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
-                  Ativo
+                <span className="shrink-0 rounded-full bg-[var(--accent)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--accent)]">
+                  ⚔️ Ativo
                 </span>
               )}
-              <button
-                className="text-white/30 hover:text-rose-400 transition-colors"
-                onClick={() => removeEntry(turn.id)}
-                disabled={busy}
-                title="Remover"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+
+              {/* Reorder buttons */}
+              <div className="flex gap-0.5">
+                <button
+                  onClick={() => moveEntry(idx, "up")}
+                  disabled={busy || idx === 0}
+                  className="h-6 w-6 rounded-lg bg-white/6 text-white/40 hover:bg-white/12 hover:text-white disabled:opacity-20 transition-colors flex items-center justify-center"
+                  title="Mover para cima"
+                >
+                  <ArrowUp className="h-3 w-3" />
+                </button>
+                <button
+                  onClick={() => moveEntry(idx, "down")}
+                  disabled={busy || idx === sorted.length - 1}
+                  className="h-6 w-6 rounded-lg bg-white/6 text-white/40 hover:bg-white/12 hover:text-white disabled:opacity-20 transition-colors flex items-center justify-center"
+                  title="Mover para baixo"
+                >
+                  <ArrowDown className="h-3 w-3" />
+                </button>
+                <button
+                  onClick={() => removeEntry(idx)}
+                  disabled={busy}
+                  className="h-6 w-6 rounded-lg text-white/20 hover:bg-rose-500/15 hover:text-rose-400 disabled:opacity-20 transition-colors flex items-center justify-center"
+                  title="Remover"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-sm text-white/40">Nenhum combatente na ordem de turno.</p>
+        <div className="rounded-xl border border-dashed border-white/10 py-8 text-center">
+          <p className="text-sm text-white/35">Nenhum combatente na ordem de turno.</p>
+          <p className="mt-1 text-xs text-white/20">Adicione jogadores e NPCs abaixo.</p>
+        </div>
       )}
 
       {/* Navigation */}
-      {sorted.length > 0 && (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            className="gap-1"
-            onClick={() => postTurns(`/api/master/campaigns/${campaignId}/turns`, { action: "prev" })}
-            disabled={busy}
-          >
-            <ChevronLeft className="h-4 w-4" /> Anterior
+      {sorted.length > 1 && (
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="secondary" onClick={() => advanceTurn("prev")} disabled={busy}>
+            ← Turno anterior
           </Button>
-          <Button
-            className="flex-1 gap-1"
-            onClick={() => postTurns(`/api/master/campaigns/${campaignId}/turns`, { action: "next" })}
-            disabled={busy}
-          >
+          <Button onClick={() => advanceTurn("next")} disabled={busy} className="gap-1">
             Próximo turno <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       )}
 
       {/* Add entry */}
-      <div className="rounded-xl border border-white/8 bg-black/20 p-3 space-y-3">
-        <p className="text-xs font-semibold text-white/60">Adicionar à ordem</p>
-        <div className="grid gap-2 sm:grid-cols-[auto_1fr_80px_auto]">
+      <div className="rounded-xl border border-white/8 bg-black/20 p-3 space-y-2">
+        <p className="text-xs font-semibold text-white/50">Adicionar combatente</p>
+        <div className="grid gap-2 sm:grid-cols-[auto_1fr_auto]">
           <select
             className="field text-sm"
             value={newType}
@@ -194,17 +230,12 @@ export function TurnTracker({ campaignId, turns, availablePlayers, availableNpcs
             onChange={(e) => setNewEntityId(e.target.value)}
           >
             <option value="">Selecionar...</option>
-            {(newType === "player" ? availablePlayers : availableNpcs).map((e) => (
-              <option key={e.id} value={e.id}>{e.name}</option>
-            ))}
+            {(newType === "player" ? availablePlayers : availableNpcs)
+              .filter((e) => !sorted.find((t) => t.entity_id === e.id))
+              .map((e) => (
+                <option key={e.id} value={e.id}>{e.name}</option>
+              ))}
           </select>
-          <input
-            type="number"
-            className="field text-sm"
-            placeholder="Init"
-            value={newInitiative}
-            onChange={(e) => setNewInitiative(Number(e.target.value))}
-          />
           <Button variant="secondary" onClick={addEntry} disabled={busy || !newEntityId}>
             Adicionar
           </Button>

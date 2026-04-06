@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SurfaceCard } from "@/components/ui/surface-card";
 import { NpcCreator } from "@/components/npc-creator";
-import { MiniMap, type MapToken } from "@/components/mini-map";
+import { MiniMap, type MapToken, type MapShape } from "@/components/mini-map";
 import { TurnTracker, type TurnEntry } from "@/components/turn-tracker";
 import { emitLiveRefresh, useLiveRefresh } from "@/hooks/use-live-refresh";
 import { aplicarArmadura, atualizarHP, classificarDano } from "@/rules/damage";
@@ -125,6 +125,7 @@ export function MasterSessionView({
       x: 0.2 + Math.random() * 0.3,
       y: 0.3 + Math.random() * 0.4,
       color: "#3b82f6",
+      classKey: String(c.class_key ?? ""),
       visible: true,
     })),
     ...npcsRaw
@@ -147,6 +148,20 @@ export function MasterSessionView({
       ? (saved as MapToken[])
       : rawTokens;
   });
+
+  const [mapShapes, setMapShapes] = useState<MapShape[]>(() => {
+    const saved = (campaignRaw as Record<string, unknown>).map_shapes;
+    return Array.isArray(saved) ? (saved as MapShape[]) : [];
+  });
+
+  function handleShapesChange(shapes: MapShape[]) {
+    setMapShapes(shapes);
+    void fetch(`/api/master/campaigns/${campaignId}/map`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ map_shapes: shapes }),
+    });
+  }
 
   const npcs = npcsRaw.map(parseNpc);
   const characters = charactersRaw.map(parseChar);
@@ -283,6 +298,29 @@ export function MasterSessionView({
     try {
       await patch(`/api/master/campaigns/${campaignId}/npcs/${npc.id}`, { health_indicator: indicator });
       emitLiveRefresh("health-indicator");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function adjustPlayerResource(
+    charId: string,
+    resource: "currentHp" | "armorCurrent" | "hope" | "fatigue" | "stress",
+    delta: number,
+  ) {
+    setBusy(`res-${charId}-${resource}`);
+    try {
+      const fieldMap: Record<string, string> = {
+        currentHp: "currentHp", armorCurrent: "armorCurrent",
+        hope: "hope", fatigue: "fatigue", stress: "stress",
+      };
+      await post("/api/characters/adjust", {
+        campaignCharacterId: charId,
+        delta: { [fieldMap[resource]]: delta },
+      });
+      emitLiveRefresh("resource-adjust");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erro ao ajustar recurso.");
     } finally {
       setBusy(null);
     }
@@ -453,21 +491,33 @@ export function MasterSessionView({
                   </div>
                 </div>
 
-                {/* Resources */}
-                <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                  <div className="rounded-lg bg-black/20 py-1.5">
-                    <p className="text-white/40">ARM</p>
-                    <p className="font-bold text-white">{char.armor_current}/{char.armor_max}</p>
+                {/* Resources with +/- controls */}
+                {(
+                  [
+                    { key: "currentHp" as const, label: "PV", value: char.current_hp, sub: char.total_hp, color: "text-rose-400" },
+                    { key: "armorCurrent" as const, label: "ARM", value: char.armor_current, sub: char.armor_max, color: "text-blue-400" },
+                    { key: "hope" as const, label: "ESP", value: char.resources.hope ?? 0, color: "text-yellow-400" },
+                    { key: "fatigue" as const, label: "FAD", value: char.resources.fatigue ?? 0, color: "text-purple-400" },
+                    { key: "stress" as const, label: "EST", value: char.resources.stress ?? 0, color: "text-orange-400" },
+                  ] as const
+                ).map(({ key, label, value, color, ...rest }) => { const sub = "sub" in rest ? rest.sub : undefined; return (
+                  <div key={key} className="flex items-center gap-1 rounded-lg bg-black/20 px-2 py-1.5">
+                    <button
+                      className="h-5 w-5 rounded-md bg-white/8 text-xs font-bold text-white/60 hover:bg-white/15 transition-colors disabled:opacity-30"
+                      onClick={() => adjustPlayerResource(char.id, key, -1)}
+                      disabled={busy === `res-${char.id}-${key}`}
+                    >−</button>
+                    <div className="flex-1 text-center">
+                      <p className="text-[9px] uppercase tracking-widest text-white/40">{label}</p>
+                      <p className={`text-sm font-bold ${color}`}>{value}{sub !== undefined ? `/${sub}` : ""}</p>
+                    </div>
+                    <button
+                      className="h-5 w-5 rounded-md bg-white/8 text-xs font-bold text-white/60 hover:bg-white/15 transition-colors disabled:opacity-30"
+                      onClick={() => adjustPlayerResource(char.id, key, 1)}
+                      disabled={busy === `res-${char.id}-${key}`}
+                    >+</button>
                   </div>
-                  <div className="rounded-lg bg-black/20 py-1.5">
-                    <p className="text-white/40">ESP</p>
-                    <p className="font-bold text-white">{char.resources.hope ?? 0}</p>
-                  </div>
-                  <div className="rounded-lg bg-black/20 py-1.5">
-                    <p className="text-white/40">FAD</p>
-                    <p className="font-bold text-white">{char.resources.fatigue ?? 0}</p>
-                  </div>
-                </div>
+                ); })}
 
                 {/* Conditions */}
                 {char.conditions.length > 0 && (
@@ -704,14 +754,16 @@ export function MasterSessionView({
         <SurfaceCard>
           <MiniMap
             tokens={mapTokens}
+            shapes={mapShapes}
             onTokenMove={handleTokenMove}
             onTokenRemove={removeToken}
+            onShapesChange={handleShapesChange}
           />
           <div className="mt-4 space-y-2">
             <p className="text-xs text-white/40">Tokens disponíveis para adicionar</p>
             <div className="flex flex-wrap gap-2">
               {[
-                ...characters.map((c) => ({ id: `player-${c.id}`, entity_id: c.id, name: c.name, color: "#3b82f6", type: "player" as const })),
+                ...characters.map((c) => ({ id: `player-${c.id}`, entity_id: c.id, name: c.name, color: "#3b82f6", classKey: c.class_key, type: "player" as const })),
                 ...npcs.map((n) => ({ id: `npc-${n.id}`, entity_id: n.id, name: n.name, color: n.token_color, type: "npc" as const })),
               ]
                 .filter((t) => !mapTokens.find((m) => m.entity_id === t.entity_id))
